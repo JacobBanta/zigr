@@ -19,11 +19,11 @@ pub fn build(b: *std.Build) void {
             zigr_mod.linkSystemLibrary("gdi32", .{});
         },
         .macos => {
-            if (std.process.getEnvVarOwned(b.graph.arena, "SDKROOT")) |sdkroot| {
+            if (b.graph.environ_map.get("SDKROOT")) |sdkroot| {
                 zigr_mod.addFrameworkPath(std.Build.LazyPath{
                     .cwd_relative = b.fmt("{s}/System/Library/Frameworks", .{sdkroot}),
                 });
-            } else |_| {}
+            }
 
             zigr_mod.linkFramework("Cocoa", .{});
             zigr_mod.linkFramework("OpenGL", .{});
@@ -66,7 +66,7 @@ pub fn build(b: *std.Build) void {
     // and translates it to zig.
     const bindgen_cmd = b.addSystemCommand(&.{ "zig", "translate-c" });
     bindgen_cmd.addFileArg(b.dependency("tigr", .{}).path("tigr.h"));
-    const bindgen_output = bindgen_cmd.captureStdOut();
+    const bindgen_output = bindgen_cmd.captureStdOut(.{});
     // This command takes the output from the previous command,
     // and writes it to `src/c.zig`.
     const bindgen_copy = b.addSystemCommand(&.{"cp"});

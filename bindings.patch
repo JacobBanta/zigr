@@ -1,38 +1,59 @@
-diff --git b/src/c.zig a/src/c.zig
-index 19694cd..dfb9b5f 100644
---- b/src/c.zig
-+++ a/src/c.zig
-@@ -54,23 +54,8 @@ pub const __builtin_assume = @import("std").zig.c_builtins.__builtin_assume;
- pub const __builtin_unreachable = @import("std").zig.c_builtins.__builtin_unreachable;
- pub const __builtin_constant_p = @import("std").zig.c_builtins.__builtin_constant_p;
- pub const __builtin_mul_overflow = @import("std").zig.c_builtins.__builtin_mul_overflow;
+diff --git a/src/c.zig b/src/c.zig
+index e7d2905..eee8f0e 100644
+--- a/src/c.zig
++++ b/src/c.zig
+@@ -1,52 +1,8 @@
+ const __root = @This();
+ pub const __builtin = @import("std").zig.c_translation.builtins;
+ pub const __helpers = @import("std").zig.c_translation.helpers;
 -pub const TPixel = extern struct {
--    r: u8 = @import("std").mem.zeroes(u8),
--    g: u8 = @import("std").mem.zeroes(u8),
--    b: u8 = @import("std").mem.zeroes(u8),
--    a: u8 = @import("std").mem.zeroes(u8),
+-    r: u8 = 0,
+-    g: u8 = 0,
+-    b: u8 = 0,
+-    a: u8 = 0,
 -};
 -pub const struct_Tigr = extern struct {
--    w: c_int = @import("std").mem.zeroes(c_int),
--    h: c_int = @import("std").mem.zeroes(c_int),
--    cx: c_int = @import("std").mem.zeroes(c_int),
--    cy: c_int = @import("std").mem.zeroes(c_int),
--    cw: c_int = @import("std").mem.zeroes(c_int),
--    ch: c_int = @import("std").mem.zeroes(c_int),
--    pix: [*c]TPixel = @import("std").mem.zeroes([*c]TPixel),
--    handle: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
--    blitMode: c_int = @import("std").mem.zeroes(c_int),
+-    w: c_int = 0,
+-    h: c_int = 0,
+-    cx: c_int = 0,
+-    cy: c_int = 0,
+-    cw: c_int = 0,
+-    ch: c_int = 0,
+-    pix: [*c]TPixel = null,
+-    handle: ?*anyopaque = null,
+-    blitMode: c_int = 0,
+-    pub const tigrFree = __root.tigrFree;
+-    pub const tigrClosed = __root.tigrClosed;
+-    pub const tigrUpdate = __root.tigrUpdate;
+-    pub const tigrBeginOpenGL = __root.tigrBeginOpenGL;
+-    pub const tigrSetPostShader = __root.tigrSetPostShader;
+-    pub const tigrSetPostFX = __root.tigrSetPostFX;
+-    pub const tigrGet = __root.tigrGet;
+-    pub const tigrPlot = __root.tigrPlot;
+-    pub const tigrClear = __root.tigrClear;
+-    pub const tigrFill = __root.tigrFill;
+-    pub const tigrLine = __root.tigrLine;
+-    pub const tigrRect = __root.tigrRect;
+-    pub const tigrFillRect = __root.tigrFillRect;
+-    pub const tigrCircle = __root.tigrCircle;
+-    pub const tigrFillCircle = __root.tigrFillCircle;
+-    pub const tigrClip = __root.tigrClip;
+-    pub const tigrBlit = __root.tigrBlit;
+-    pub const tigrBlitAlpha = __root.tigrBlitAlpha;
+-    pub const tigrBlitTint = __root.tigrBlitTint;
+-    pub const tigrBlitMode = __root.tigrBlitMode;
+-    pub const tigrLoadFont = __root.tigrLoadFont;
+-    pub const tigrPrint = __root.tigrPrint;
+-    pub const tigrMouse = __root.tigrMouse;
+-    pub const tigrTouch = __root.tigrTouch;
+-    pub const tigrScrollWheel = __root.tigrScrollWheel;
+-    pub const tigrKeyDown = __root.tigrKeyDown;
+-    pub const tigrKeyHeld = __root.tigrKeyHeld;
+-    pub const tigrReadChar = __root.tigrReadChar;
+-    pub const tigrError = __root.tigrError;
 -};
 +pub const TPixel = @import("main.zig").Pixel;
 +pub const struct_Tigr = @import("main.zig").Tigr;
  pub const Tigr = struct_Tigr;
  pub extern fn tigrWindow(w: c_int, h: c_int, title: [*c]const u8, flags: c_int) [*c]Tigr;
  pub extern fn tigrBitmap(w: c_int, h: c_int) [*c]Tigr;
-@@ -231,7 +216,6 @@ pub extern fn tigrScrollWheel(bmp: [*c]Tigr, x: [*c]f32, y: [*c]f32) void;
- pub extern fn tigrKeyDown(bmp: [*c]Tigr, key: c_int) c_int;
- pub extern fn tigrKeyHeld(bmp: [*c]Tigr, key: c_int) c_int;
- pub extern fn tigrReadChar(bmp: [*c]Tigr) c_int;
--pub extern fn tigrShowKeyboard(show: c_int) void;
- pub extern fn tigrLoadImage(fileName: [*c]const u8) [*c]Tigr;
- pub extern fn tigrLoadImageMem(data: ?*const anyopaque, length: c_int) [*c]Tigr;
- pub extern fn tigrSaveImage(fileName: [*c]const u8, bmp: [*c]Tigr) c_int;

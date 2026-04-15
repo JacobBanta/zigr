@@ -772,5 +772,5 @@ pub fn compileAllFunctions() void {
 }
 
 test "refAllDecls" {
-    _ = std.testing.refAllDeclsRecursive(@This());
+    _ = std.testing.refAllDecls(@This());
 }
