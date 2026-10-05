@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    zig-overlay.url = "github:mitchellh/zig-overlay";
   };
 
   outputs =
@@ -11,6 +12,7 @@
       self,
       nixpkgs,
       flake-utils,
+	  zig-overlay,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -18,7 +20,7 @@
         pkgs = import nixpkgs { inherit system; };
 
         linuxDeps = with pkgs; [
-          xorg.libX11
+          libX11
           libGL
           libGLU
         ];
@@ -32,12 +34,12 @@
         devShells.default = pkgs.mkShell.override { stdenv = pkgs.stdenvNoCC; } {
           packages =
             [
-              pkgs.zig
+              zig-overlay.packages.${system}.default
             ]
-            ++ pkgs.lib.optionals pkgs.stdenv.isLinux ([ pkgs.pkg-config ] ++ linuxDeps)
-            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin darwinDeps;
+            ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux ([ pkgs.pkg-config ] ++ linuxDeps)
+            ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin darwinDeps;
 
-          env = pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+          env = pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
             SDKROOT = "${pkgs.apple-sdk_15.sdkroot}";
           };
 

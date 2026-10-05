@@ -212,8 +212,10 @@ pub const __x86_64__ = @as(c_int, 1);
 pub const __x86_64 = @as(c_int, 1);
 pub const __SEG_GS = @as(c_int, 1);
 pub const __SEG_FS = @as(c_int, 1);
-pub const __seg_gs = @compileError("unable to translate macro: undefined identifier `address_space`"); // <builtin>:33:9
-pub const __seg_fs = @compileError("unable to translate macro: undefined identifier `address_space`"); // <builtin>:34:9
+pub const __seg_gs = @compileError("unable to translate macro: undefined identifier `address_space`");
+// <builtin>:33:9
+pub const __seg_fs = @compileError("unable to translate macro: undefined identifier `address_space`");
+// <builtin>:34:9
 pub const __LAHF_SAHF__ = @as(c_int, 1);
 pub const __AES__ = @as(c_int, 1);
 pub const __VAES__ = @as(c_int, 1);
@@ -234,7 +236,6 @@ pub const __SSE4A__ = @as(c_int, 1);
 pub const __FMA__ = @as(c_int, 1);
 pub const __F16C__ = @as(c_int, 1);
 pub const __GFNI__ = @as(c_int, 1);
-pub const __EVEX512__ = @as(c_int, 1);
 pub const __AVX512CD__ = @as(c_int, 1);
 pub const __AVX512VPOPCNTDQ__ = @as(c_int, 1);
 pub const __AVX512VNNI__ = @as(c_int, 1);
@@ -350,10 +351,12 @@ pub const __SIZEOF_INT128__ = @as(c_int, 16);
 pub const __INTPTR_TYPE__ = c_long;
 pub const __UINTPTR_TYPE__ = c_ulong;
 pub const __INTMAX_TYPE__ = c_long;
-pub const __INTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `L`"); // <builtin>:172:9
+pub const __INTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `L`");
+// <builtin>:171:9
 pub const __INTMAX_C = __helpers.L_SUFFIX;
 pub const __UINTMAX_TYPE__ = c_ulong;
-pub const __UINTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `UL`"); // <builtin>:175:9
+pub const __UINTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `UL`");
+// <builtin>:174:9
 pub const __UINTMAX_C = __helpers.UL_SUFFIX;
 pub const __PTRDIFF_TYPE__ = c_long;
 pub const __SIZE_TYPE__ = c_ulong;
@@ -388,7 +391,8 @@ pub inline fn __INT32_C(c: anytype) @TypeOf(c) {
 pub const __INT64_TYPE__ = c_long;
 pub const __INT64_FMTd__ = "ld";
 pub const __INT64_FMTi__ = "li";
-pub const __INT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `L`"); // <builtin>:201:9
+pub const __INT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `L`");
+// <builtin>:200:9
 pub const __INT64_C = __helpers.L_SUFFIX;
 pub const __UINT8_TYPE__ = u8;
 pub const __UINT8_FMTo__ = "hho";
@@ -419,7 +423,8 @@ pub const __UINT32_FMTo__ = "o";
 pub const __UINT32_FMTu__ = "u";
 pub const __UINT32_FMTx__ = "x";
 pub const __UINT32_FMTX__ = "X";
-pub const __UINT32_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `U`"); // <builtin>:226:9
+pub const __UINT32_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `U`");
+// <builtin>:225:9
 pub const __UINT32_C = __helpers.U_SUFFIX;
 pub const __UINT32_MAX__ = __helpers.promoteIntLiteral(c_uint, 4294967295, .decimal);
 pub const __INT32_MAX__ = __helpers.promoteIntLiteral(c_int, 2147483647, .decimal);
@@ -428,7 +433,8 @@ pub const __UINT64_FMTo__ = "lo";
 pub const __UINT64_FMTu__ = "lu";
 pub const __UINT64_FMTx__ = "lx";
 pub const __UINT64_FMTX__ = "lX";
-pub const __UINT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `UL`"); // <builtin>:235:9
+pub const __UINT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `UL`");
+// <builtin>:234:9
 pub const __UINT64_C = __helpers.UL_SUFFIX;
 pub const __UINT64_MAX__ = __helpers.promoteIntLiteral(c_ulong, 18446744073709551615, .decimal);
 pub const __INT64_MAX__ = __helpers.promoteIntLiteral(c_long, 9223372036854775807, .decimal);
@@ -579,7 +585,8 @@ pub const __LDBL_MIN__ = @as(c_longdouble, 3.36210314311209350626e-4932);
 pub const __FLT_EVAL_METHOD__ = @as(c_int, 0);
 pub const __FLT_RADIX__ = @as(c_int, 2);
 pub const __DECIMAL_DIG__ = __LDBL_DECIMAL_DIG__;
-pub const TIGR_INLINE = @compileError("unable to translate C expr: unexpected token 'static'"); // /home/jacob/zigr/zig-pkg/N-V-__8AAIdnEACvJuP1P4YvA1yDg99-JRQFBu_23aLlCjB5/tigr.h:29:9
+pub const TIGR_INLINE = @compileError("unable to translate C expr: unexpected token 'static'");
+// ./zig-pkg/N-V-__8AAIdnEACvJuP1P4YvA1yDg99-JRQFBu_23aLlCjB5/tigr.h:29:9
 pub const TIGR_FIXED = @as(c_int, 0);
 pub const TIGR_AUTO = @as(c_int, 1);
 pub const TIGR_2X = @as(c_int, 2);
