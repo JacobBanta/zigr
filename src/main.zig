@@ -16,6 +16,9 @@ pub const Pixel = extern struct {
     pub fn initRGB(r: u8, g: u8, b: u8) Pixel {
         return .{ .r = r, .g = g, .b = b };
     }
+    pub fn initRGBA(r: u8, g: u8, b: u8, a: u8) Pixel {
+        return .{ .r = r, .g = g, .b = b, .a = a };
+    }
 };
 
 /// Alias to Tigr
@@ -68,8 +71,8 @@ pub const Tigr = extern struct {
 
     /// Sets post shader for a window.
     /// This replaces the built-in post-FX shader.
-    pub inline fn setPostShader(bmp: *Tigr, code: [*c]const u8, size: c_int) void {
-        return C.tigrSetPostShader(bmp, code, size);
+    pub inline fn setPostShader(bmp: *Tigr, code: []const u8) void {
+        return C.tigrSetPostShader(bmp, code.ptr, code.len);
     }
 
     /// Sets post-FX properties for a window.
@@ -245,14 +248,14 @@ pub const Tigr = extern struct {
 
     /// Loads a PNG from a file. (fileName is UTF-8)
     /// On error, returns NULL and sets errno.
-    pub inline fn loadImage(fileName: [:0]const u8) *Tigr {
+    pub inline fn loadImage(fileName: [:0]const u8) ?*Tigr {
         return C.tigrLoadImage(fileName.ptr);
     }
 
     /// Loads a PNG from memory.
     /// On error, returns NULL and sets errno.
-    pub inline fn loadImageMem(data: ?*const anyopaque, length: c_int) *Tigr {
-        return C.tigrLoadImageMem(data, length);
+    pub inline fn loadImageMem(data: []const u8) ?*Tigr {
+        return C.tigrLoadImageMem(data.ptr, data.len);
     }
 
     /// Saves a PNG to a file. (fileName is UTF-8)
@@ -307,116 +310,6 @@ pub const WindowFlags = struct {
 /// Creates an empty off-screen bitmap.
 pub inline fn initBitmap(w: c_int, h: c_int) *Tigr {
     return C.tigrBitmap(w, h);
-}
-
-/// Deletes a window/bitmap.
-pub inline fn free(bmp: *Tigr) void {
-    C.tigrFree(bmp);
-}
-
-/// Returns non-zero if the user requested to close a window.
-pub inline fn closed(bmp: *Tigr) bool {
-    return C.tigrClosed(bmp) != 0;
-}
-
-/// Displays a window's contents on-screen and updates input.
-pub inline fn update(bmp: *Tigr) void {
-    return C.tigrUpdate(bmp);
-}
-
-/// Called before doing direct OpenGL calls and before update.
-/// Returns non-zero if OpenGL is available.
-pub inline fn beginOpenGL(bmp: *Tigr) c_int {
-    return C.tigrBeginOpenGL(bmp);
-}
-
-/// Sets post shader for a window.
-/// This replaces the built-in post-FX shader.
-pub inline fn setPostShader(bmp: *Tigr, code: [*c]const u8, size: c_int) void {
-    return C.tigrSetPostShader(bmp, code, size);
-}
-
-/// Sets post-FX properties for a window.
-///
-/// The built-in post-FX shader uses the following parameters:
-/// p1: hblur - use bilinear filtering along the x-axis (pixels)
-/// p2: vblur - use bilinear filtering along the y-axis (pixels)
-/// p3: scanlines - CRT scanlines effect (0-1)
-/// p4: contrast - contrast boost (1 = no change, 2 = 2X contrast, etc)
-pub inline fn setPostFX(bmp: *Tigr, p1: f32, p2: f32, p3: f32, p4: f32) void {
-    return C.tigrSetPostFX(bmp, p1, p2, p3, p4);
-}
-
-/// Helper for reading pixels.
-/// For high performance, just access bmp->pix directly.
-pub inline fn get(bmp: *Tigr, x: c_int, y: c_int) Pixel {
-    return C.tigrGet(bmp, x, y);
-}
-
-/// Plots a pixel.
-/// Clips and blends.
-/// For high performance, just access bmp->pix directly.
-pub inline fn plot(bmp: *Tigr, x: c_int, y: c_int, pix: Pixel) void {
-    return C.tigrPlot(bmp, x, y, pix);
-}
-
-/// Clears a bitmap to a color.
-/// No blending, no clipping.
-pub inline fn clear(bmp: *Tigr, color: Pixel) void {
-    return C.tigrClear(bmp, color);
-}
-
-/// Fills a rectangular area.
-/// No blending, no clipping.
-pub inline fn fill(bmp: *Tigr, x: c_int, y: c_int, w: c_int, h: c_int, color: Pixel) void {
-    return C.tigrFill(bmp, x, y, w, h, color);
-}
-
-/// Draws a line.
-/// Start pixel is drawn, end pixel is not.
-/// Clips and blends.
-pub inline fn line(bmp: *Tigr, x0: c_int, y0: c_int, x1: c_int, y1: c_int, color: Pixel) void {
-    return C.tigrLine(bmp, x0, y0, x1, y1, color);
-}
-
-/// Draws an empty rectangle.
-/// Drawing a 1x1 rectangle yields the same result as calling plot.
-/// Clips and blends.
-pub inline fn rect(bmp: *Tigr, x: c_int, y: c_int, w: c_int, h: c_int, color: Pixel) void {
-    return C.tigrRect(bmp, x, y, w, h, color);
-}
-
-/// Fills a rectangle.
-/// Fills the inside of the specified rectangular area.
-/// Calling rect followed by fillRect using the same arguments
-/// causes no overdrawing.
-/// Clips and blends.
-pub inline fn fillRect(bmp: *Tigr, x: c_int, y: c_int, w: c_int, h: c_int, color: Pixel) void {
-    return C.tigrFillRect(bmp, x, y, w, h, color);
-}
-
-/// Draws a circle.
-/// Drawing a zero radius circle yields the same result as calling plot.
-/// Drawing a circle with radius one draws a circle three pixels wide.
-/// Clips and blends.
-pub inline fn circle(bmp: *Tigr, x: c_int, y: c_int, r: c_int, color: Pixel) void {
-    return C.tigrCircle(bmp, x, y, r, color);
-}
-
-/// Fills a circle.
-/// Fills the inside of the specified circle.
-/// Calling circle followed by fillCircle using the same arguments
-/// causes no overdrawing.
-/// Filling a circle with zero radius has no effect.
-/// Clips and blends.
-pub inline fn fillCircle(bmp: *Tigr, x: c_int, y: c_int, r: c_int, color: Pixel) void {
-    return C.tigrFillCircle(bmp, x, y, r, color);
-}
-
-/// Sets clip rect.
-/// Set to (0, 0, -1, -1) to reset clipping to full bitmap.
-pub inline fn clip(bmp: *Tigr, cx: c_int, cy: c_int, cw: c_int, ch: c_int) void {
-    return C.tigrClip(bmp, cx, cy, cw, ch);
 }
 
 /// Copies bitmap data.
@@ -508,14 +401,6 @@ pub inline fn loadFont(bitmap: *Tigr, codepage: Codepage) *Font {
 /// Frees a font and associated font sheet.
 pub inline fn freeFont(font: *Font) void {
     return C.tigrFreeFont(font);
-}
-
-/// Prints UTF-8 text onto a bitmap.
-/// NOTE:
-///  This uses the target bitmap blit mode.
-///  See blitTint for details.
-pub inline fn print(dest: *Tigr, font: ?*Font, x: c_int, y: c_int, color: Pixel, text: [:0]const u8) void {
-    return C.tigrPrint(dest, font orelse tfont, x, y, color, text.ptr);
 }
 
 /// Returns the width of a string.
@@ -674,14 +559,14 @@ pub inline fn readChar(bmp: *Tigr) ?Key {
 
 /// Loads a PNG from a file. (fileName is UTF-8)
 /// On error, returns NULL and sets errno.
-pub inline fn loadImage(fileName: [:0]const u8) *Tigr {
+pub inline fn loadImage(fileName: [:0]const u8) ?*Tigr {
     return C.tigrLoadImage(fileName.ptr);
 }
 
 /// Loads a PNG from memory.
 /// On error, returns NULL and sets errno.
-pub inline fn loadImageMem(data: ?*const anyopaque, length: c_int) *Tigr {
-    return C.tigrLoadImageMem(data, length);
+pub inline fn loadImageMem(data: []const u8) ?*Tigr {
+    return C.tigrLoadImageMem(data.ptr, data.len);
 }
 
 /// Saves a PNG to a file. (fileName is UTF-8)
@@ -699,15 +584,6 @@ pub inline fn time() f32 {
 /// Displays an error message and quits. (UTF-8)
 /// 'bmp' can be NULL.
 pub const tigrError = C.tigrError;
-
-/// Reads an entire file into memory. (fileName is UTF-8)
-/// Free it yourself after with 'free'.
-/// On error, returns NULL and sets errno.
-/// TIGR will automatically append a NUL terminator byte
-/// to the end (not included in the length)
-pub inline fn readFile(fileName: [:0]const u8, length: [*c]c_int) ?*anyopaque {
-    return C.tigrReadFile(fileName.ptr, length);
-}
 
 /// Decompresses DEFLATEd zip/zlib data into a buffer.
 /// Returns non-zero on success.
@@ -730,29 +606,29 @@ pub inline fn encodeUTF8(text: [*c]u8, cp: c_int) [*c]u8 {
 pub fn compileAllFunctions() void {
     _ = initWindow(undefined, undefined, undefined, .{});
     _ = initBitmap(undefined, undefined);
-    free(undefined);
-    _ = closed(undefined);
-    update(undefined);
-    _ = beginOpenGL(undefined);
-    setPostShader(undefined, undefined, undefined);
-    setPostFX(undefined, undefined, undefined, undefined, undefined);
-    _ = get(undefined, undefined, undefined);
-    plot(undefined, undefined, undefined, undefined);
-    clear(undefined, undefined);
-    fill(undefined, undefined, undefined, undefined, undefined, undefined);
-    line(undefined, undefined, undefined, undefined, undefined, undefined);
-    rect(undefined, undefined, undefined, undefined, undefined, undefined);
-    fillRect(undefined, undefined, undefined, undefined, undefined, undefined);
-    circle(undefined, undefined, undefined, undefined, undefined);
-    fillCircle(undefined, undefined, undefined, undefined, undefined);
-    clip(undefined, undefined, undefined, undefined, undefined);
+    Tigr.free(undefined);
+    _ = Tigr.closed(undefined);
+    Tigr.update(undefined);
+    _ = Tigr.beginOpenGL(undefined);
+    Tigr.setPostShader(undefined, undefined);
+    Tigr.setPostFX(undefined, undefined, undefined, undefined, undefined);
+    _ = Tigr.get(undefined, undefined, undefined);
+    Tigr.plot(undefined, undefined, undefined, undefined);
+    Tigr.clear(undefined, undefined);
+    Tigr.fill(undefined, undefined, undefined, undefined, undefined, undefined);
+    Tigr.line(undefined, undefined, undefined, undefined, undefined, undefined);
+    Tigr.rect(undefined, undefined, undefined, undefined, undefined, undefined);
+    Tigr.fillRect(undefined, undefined, undefined, undefined, undefined, undefined);
+    Tigr.circle(undefined, undefined, undefined, undefined, undefined);
+    Tigr.fillCircle(undefined, undefined, undefined, undefined, undefined);
+    Tigr.clip(undefined, undefined, undefined, undefined, undefined);
     blit(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
     blitAlpha(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
     blitTint(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
     blitMode(undefined, undefined);
     _ = loadFont(undefined, undefined);
     freeFont(undefined);
-    print(undefined, null, undefined, undefined, undefined, undefined);
+    Tigr.print(undefined, null, undefined, undefined, undefined, undefined);
     _ = textWidth(null, undefined);
     _ = textHeight(null, undefined);
     _ = mouse(undefined);
@@ -762,10 +638,9 @@ pub fn compileAllFunctions() void {
     _ = keyHeld(undefined, undefined);
     _ = readChar(undefined);
     _ = loadImage(undefined);
-    _ = loadImageMem(undefined, undefined);
+    _ = loadImageMem(undefined);
     _ = saveImage(undefined, undefined);
     _ = time();
-    _ = readFile(undefined, undefined);
     _ = inflate(undefined, undefined, undefined, undefined);
     _ = decodeUTF8(undefined, undefined);
     _ = encodeUTF8(undefined, undefined);
