@@ -49,18 +49,28 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Makes sure everything compiles");
     test_step.dependOn(&run_tests.step);
 
-    const hello_example = b.addExecutable(.{
-        .name = "hello",
-        .root_module = b.createModule(.{
-            .optimize = optimize,
-            .target = target,
-            .root_source_file = b.path("examples/hello.zig"),
-            .imports = &.{std.Build.Module.Import{ .name = "zigr", .module = zigr_mod }},
-        }),
-    });
+    const examples_step = b.step("examples", "Builds the examples");
 
-    const examples_step = b.step("example", "Builds the example");
-    examples_step.dependOn(&b.addInstallArtifact(hello_example, .{}).step);
+    inline for (&.{
+        "hello",
+        "clip",
+        "flags",
+        "headless",
+        "shader",
+        "demo",
+    }) |name| {
+        const example = b.addExecutable(.{
+            .name = name,
+            .root_module = b.createModule(.{
+                .optimize = optimize,
+                .target = target,
+                .root_source_file = b.path(b.fmt("examples/{s}.zig", .{name})),
+                .imports = &.{std.Build.Module.Import{ .name = "zigr", .module = zigr_mod }},
+            }),
+        });
+        examples_step.dependOn(&b.addInstallArtifact(example, .{}).step);
+        b.step(b.fmt("example-{s}", .{name}), b.fmt("Run the {s} example project", .{name})).dependOn(&b.addRunArtifact(example).step);
+    }
 
     // This command takes the header file from the zig cache,
     // and translates it to zig.
